@@ -2,7 +2,7 @@
 
 Please feel free to incorporate into the paper or ignore at your discretion. :-) -- Jennifer Yoon --
 
-Screenshot PNG files with hand drawn markups are stored in ` ./figures/`  
+Screenshot PNG files with hand drawn markups are stored in ` .\figures\`  
 
 ## Table of Content, Jupyter Notebooks  
 (in order of appearance in paper)
