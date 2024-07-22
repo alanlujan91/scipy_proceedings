@@ -4,7 +4,7 @@ Please feel free to incorporate into the paper or ignore at your discretion. :-)
 
 Screenshot PNG files with hand drawn markups are stored in ` .\figures\`  
 
-## Table of Content, Jupyter Notebooks  
+## Table of Contents, Jupyter Notebooks  
 (in order of appearance in paper)
 
 ### 1. Multivariate_Interpolation.ipynb  
