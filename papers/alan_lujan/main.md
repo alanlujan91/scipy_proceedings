@@ -3,10 +3,14 @@
 title: multinterp
 subtitle: A Unified Interface for Multivariate Interpolation in the Scientific Python Ecosystem
 abstract: |
-  Multivariate interpolation is a fundamental tool in scientific computing, yet the Python ecosystem offers a fragmented landscape of specialized tools. This fragmentation hinders code reusability, experimentation, and efficient deployment across diverse hardware. To address this challenge, I've developed the `multinterp` package. It provides a unified interface for regular/rectilinear interpolation, supports serial (NumPy/SciPy), parallel (Numba), and GPU (CuPy, PyTorch, JAX) backends, and includes tools for multivalued interpolation and interpolation of derivatives.
+  Multivariate interpolation is a fundamental tool in scientific computing, yet the Python ecosystem offers a fragmented landscape of specialized tools. This fragmentation hinders code reusability, experimentation, and efficient deployment across diverse hardware. To address this challenge, I've `[[I have]]` developed the `multinterp` package. It provides a unified interface for regular/rectilinear interpolation, 
+  `[[regular and irregular (data) structures, rectilinear and curvilinear grids, and regular-mesh, quadrilateral-mesh, and random-mesh geometries, ?]]`  
+  supports serial (NumPy/SciPy), parallel (Numba), and GPU (CuPy, PyTorch, JAX) backends, and includes tools for multivalued interpolation and `[["differentiation." instead]]` interpolation of derivatives.
 exports:
   - format: pdf
 ---
+
+`[[JY reviewer notes: my comments will be inside double brackets. Please feel free to incorporate or ignore at your discretion. All of my comments are intended to improve readability for a general reader.]]`
 
 ## Introduction
 
@@ -16,11 +20,22 @@ Currently, there is no unified and comprehensive interface for interpolation wit
 
 This project aims to develop a comprehensive framework for multivariate interpolation for structured and unstructured data that can be used with different software technologies and hardware backends.
 
-## Grid Interpolation
+`[[A highlighted box of definitions of mathematical terms may be useful to jog the memory of a general reader. Here seems like a good spot. Below are suggested definitions from Wikipedia. Please feel free to substitute with your own.]]`
 
-Functions are powerful mappings between sets of inputs and outputs, indicating how one set of values is related to another. Functions, however, are also infinitely dimensional, in that the inputs can range over an infinite number of values each mapping 1-to-1 (typically) to an infinite number of outputs. This makes it difficult to represent non-analytic functions in a computational environment, as we can only store a finite number of values in memory. For this reason, interpolation is a powerful tool in scientific computing, as it allows us to represent functions with a finite number of values and to approximate the function's behavior between these values.
+`[[**Definition of Mathematical Terms**]]`   
+`[[multivariate interpolation: In mathematics or numerical analysis, "multivariate interpolation" is interpolation on functions of more than one variable.]]`  
+`[[multivariate calculus (or multivariable calculus): is the extension of calculus in one variable to calculus with functions of several variables.]]`  
+`[[non-analytic functions: (JY) are loosely defined as functions that do not have a known, closed-form solution.  (Wikipedia) Formally, non-analytic smooth functions are functions that are not differentiable along the full range of values of the function. Therefore, non-analytic smooth functions are solved by using approximation techniques.]]` 
 
-The set of input values on which we know the function's output values is called a **grid**. A grid (or input grid) of values can be represented in many ways, depending on its underlying structure. The broadest categories of grids are regular or structured grids, and irregular or unstructured grids. Regular grids are those where the input values are arranged in a regular pattern, such as a triangle or a quadrangle. Irregular grids are those where the input values are not arranged in a particularly structured way and can seem to be scattered randomly across the input space.
+## Grid Interpolationis 
+
+Functions are powerful mappings between sets of inputs and outputs, indicating how one set of values is related to another. Functions, however, are also infinitely dimensional, in that the inputs can range over an infinite number of values each mapping 1-to-1 (typically) to an infinite number of outputs.
+`[[a but awkward, how about, "Functions, however, are also  infinitely dimensional. Inputs of infinite dimensions may be mapped onto outputs of infinite dimensions."]]` 
+This makes it difficult to represent non-analytic functions in a computational environment, as we can only store a finite number of values in memory. For this reason, interpolation is a powerful tool in scientific computing, as it allows us to represent functions with a finite number of values `[[maybe  points, locations]]` and to approximate the function's behavior between these values `[[points, locations]]`.
+
+The set of input values on which we know the function's output values is called a **grid**. A grid (or input grid) of values can be represented in many ways, depending on its underlying structure. The broadest categories of grids are regular or structured grids, and irregular or unstructured grids. 
+`[[how about, "The broadest grid category is based on its (data) structure, and is between regular and irregular grids.]]`
+Regular grids are those where the input values are arranged in a regular pattern, such as a triangle or a quadrangle. Irregular grids are those where the input values are not arranged in a particularly structured way and can seem to be scattered randomly across the input space.
 
 As we might imagine, interpolation on regular grids is much easier than interpolation on irregular grids as we are able to exploit the structure of the grid to make predictions about the function's behavior between known values. Irregular grid interpolation is much more difficult, and often requires *regularizing* and/or *regression* techniques to make predictions about the function's behavior between known values. `multinterp` aims to provide a comprehensive set of tools for both regular and irregular grid interpolation, and we will discuss some of these tools in the following sections.
 
@@ -43,7 +58,9 @@ As we might imagine, interpolation on regular grids is much easier than interpol
 
 ## Rectilinear Interpolation
 
-A *rectilinear* grid is a regular grid where the input values are arranged in a *rectangular* (in 2D) or *hyper-rectangular* (in higher dimensions) pattern. Moreover, they can be represented by the tensor product of monotonically increasing vectors along each dimension. For example, a 2D rectilinear grid can be represented by two 1D arrays of increasing values, such as $x = [x_0, x_1, x_2, \cdots, x_n]$ and $y = [y_0, y_1, y_2, \cdots, y_m]$, where $x_i > x_j$ and $y_i > y_j$ $\forall i > j$, and the input grid is then represented by $x \times y$ of dimensions $n \times m$. This allows for a very simple and efficient interpolation algorithm, as we can easily find and use the nearest known values to make predictions about the function's behavior in the unknown space.
+A *rectilinear* grid is a regular grid where the input values are arranged in a *rectangular* (in 2D) or *hyper-rectangular* (in higher dimensions) pattern. Moreover, they can be represented by the tensor product of monotonically increasing vectors along each dimension. For example, a 2D rectilinear grid can be represented by two 1D arrays of increasing values, such as $x = [x_0, x_1, x_2, \cdots, x_n]$ and $y = [y_0, y_1, y_2, \cdots, y_m]$, where $x_i > x_j$ and $y_i > y_j$ $\forall i > j$ `[[suggest using words "for all i > j" Non-math readers find it more friendly than symbol upside-down A.]]`, and the input grid is then represented by $x \times y$ of dimensions $n \times m$. 
+`[[awkward, but not sure how to fix. vector values are "increasing" from left-to-right index position, but math notations x_i > x_j and y_i > y_j describe a decreasing order when read from left-to-right. Also i and j are alphabetically increasing from left-to-right, but i index position is higher than (to the right of) j index position. i and j are in reverse alphabetical position.]]`
+This allows for a very simple and efficient interpolation algorithm, as we can easily find and use the nearest known values to make predictions about the function's behavior in the unknown space.
 
 ```{figure} figures/BilinearInterpolation
 :label: bilinear
@@ -52,6 +69,7 @@ A *rectilinear* grid is a regular grid where the input values are arranged in a 
 
 A non-uniformly spaced rectilinear grid can be transformed into a uniformly spaced coordinate grid (and vice versa).
 ```
+`[[screen compatibility error, last line above does not wrap when viewed directly on Github repo, on some devices. If possible keep line width to 80 characters.]]`
 
 ### Multilinear Interpolation
 
@@ -91,7 +109,7 @@ A *curvilinear* grid is a regular grid whose input coordinates are *curved* or *
 
 A curvilinear grid can be transformed into a rectilinear grid by a simple remapping of its vertices.
 ```
-
+`[[screen compatibility error, last line above does not wrap when viewed directly on Github repo, on some devices. If possible keep line width to 80 characters.]]`
 ```{include} notebooks/Curvilinear_Interpolation.ipynb
 ```
 
@@ -104,6 +122,7 @@ A curvilinear grid can be transformed into a rectilinear grid by a simple remapp
 
 Unstructured grids are irregular and often require a triangulation step which might be computationally expensive and time-consuming.
 ```
+`[[screen compatibility error, last line above does not wrap when viewed directly on Github repo, on some devices. If possible keep line width to 80 characters.]]`  
 
 ```{include} notebooks/Unstructured_Interpolation.ipynb
 ```
@@ -111,6 +130,7 @@ Unstructured grids are irregular and often require a triangulation step which mi
 ## Conclusion
 
 Multivariate interpolation is a cornerstone of scientific computing, yet the Python ecosystem (@Oliphant2007) presents a fragmented landscape of tools. While individually powerful, these packages often lack a unified interface. This fragmentation makes it difficult for researchers to experiment with different interpolation methods, optimize performance across diverse hardware, and handle varying data structures (regular, rectilinear, curvilinear, unstructured).
+`[[is there a way to give a nod to NumPy and PyTorch for having call-backs, hooks, and function wrappers to allow a user to swap out an optimization function/module mid-stream? It does not cover all the use cases of the `multinterp` package, but some effort went into developing a layered API to cover varying use cases.]]`
 
 The `multinterp` project seeks to change this. Its goal is to provide a unified, comprehensive, and flexible framework for multivariate interpolation in Python. This framework will streamline workflows by offering:
 
@@ -119,3 +139,17 @@ The `multinterp` project seeks to change this. Its goal is to provide a unified,
 - Broad Functionality: Tools for regular/rectilinear interpolation, multivalued interpolation, and derivative calculations, addressing a wide range of scientific problems.
 
 The multinterp package (<https://github.com/alanlujan91/multinterp>) is currently in its beta stage.  It offers a strong foundation but welcomes community contributions to reach its full potential.  We invite collaboration to improve documentation, expand the test suite, and ensure the codebase aligns with the highest standards of Python package development.
+
+`[[On Curvenoted build preview: right-column bottom shows list of files used in the article. These should be listed in the order of their appearance in the paper. See suggestion below.]]`
+```
+[[Supporting Documents  
+(shown in the order of appearance)  
+ 1. Multivariate_Interpolation.ipynb  
+ 2. Multivariate_Interpolation_with_Derivatives.ipynb   
+ 3. Multivalued_Interpolation.ipynb
+ 4. Curvilinear_Interpoliation.ipynb 
+ 5. Unstructured_Interpolation.ipynb
+ 6. manim_notebook.ipynb (figure animation on Curvenotes build)
+ [[7. figures.ipynb add? (build figure grid scaffolds) ]]
+]]
+```
