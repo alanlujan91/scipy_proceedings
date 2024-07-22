@@ -26,12 +26,12 @@ It's not obvious what is different in the 2 figures. They look identical. May be
 
 [[Title: figure 1: 3D projection of squared coordinates function. ]]
 
-screenshot3.PNG <img src="\figures\screenshot3.PNG" width="500" >
+screenshot3.PNG <img src="\figures\screenshot3.PNG" width="600" >
 
 
 [[Title figure 2: interpolated 3D projection, using sampled points from figure 1. Image is pixelated because outputs are interpolations.]]
 
-screenshot4.PNG <img src="/figures/screenshot4.PNG" >
+screenshot4.PNG <img src="\figures\screenshot4.PNG" width="600" >
 
 
 
@@ -41,7 +41,7 @@ Difficult to see relationship between first group of 2 figures and second group 
 
 axis need labels on all 4 figures.  
 
-screenshot5.PNG <img src="/figures/screenshot5.PNG" >
+screenshot5.PNG <img src="\figures\screenshot5.PNG" width="600" >
 
 ### 3. Multivalued_Interpolation.ipynb
 
@@ -64,6 +64,6 @@ none, cool animation movie in Curvenotes
 
 
 
-screenshot1.PNG  <img src="/figures/screenshot1.PNG" />
+screenshot1.PNG  <img src="\figures\screenshot1.PNG" width="700" >
 
-screenshot2.PNG <img src="/figures/screenshot2.PNG" />
+screenshot2.PNG <img src="\figures\screenshot2.PNG" width="700" >
