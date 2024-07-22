@@ -26,7 +26,7 @@ It's not obvious what is different in the 2 figures. They look identical. May be
 
 [[Title: figure 1: 3D projection of squared coordinates function. ]]
 
-screenshot3.PNG <img src="/figures/screenshot3.PNG" >
+screenshot3.PNG <img src="\figures\screenshot3.PNG" >
 
 
 [[Title figure 2: interpolated 3D projection, using sampled points from figure 1. Image is pixelated because outputs are interpolations.]]
