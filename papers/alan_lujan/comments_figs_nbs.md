@@ -17,7 +17,7 @@ def squared_coords(x, y):
 ```
 comment: It will be helpful to provide a short reason for choosing the squared coordinates function. [[ example: A squared x and y coordinates function is used to draw a figure whose grid geometry looks like a curved sheet in 3D projection. ]]
 
-[[This closed-form solution function, for which all points along the curve is known, is used as the baseline, to sample points that will simulate an unknown function. Then we use one of the interpolation methods to calculate points along between sampled grid locations or similarly shaped curve function.]]
+[[This closed-form solution function, for which all points along the curve is known, is used as the baseline, to sample points that will simulate an unknown function. Then we use one of the interpolation methods to calculate points in between sampled grid locations of the similarly shaped curve function.]]
 
 First 2 figures need titles and descriptions.  
 Blue colors are too uniform. Is there a way to have gradation?, so curve will be exaggerated?  
