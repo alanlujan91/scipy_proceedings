@@ -4,6 +4,8 @@ Please feel free to incorporate into the paper or ignore at your discretion. :-)
 
 Screenshot PNG files with hand drawn markups are stored in ` .\figures\`  
 
+Curvenotes build preview with animation (figures) look very nice, cool!  
+
 ## Table of Contents, Jupyter Notebooks  
 (in order of appearance in paper)
 
@@ -45,12 +47,12 @@ screenshot5.PNG <img src="\figures\screenshot5.PNG" width="600" >
 
 ### 3. Multivalued_Interpolation.ipynb
 
-none, cool animation movie in Curvenotes 
+none. Could use grid lines or pop-out box with enhanced pixelation to make the differences between plots easier to eye-ball.  
 
 
 ### 4. Curvilinear_Interpoliation.ipynb 
 
-none, cool animation movie in Curvenotes
+none. Could use grid lines or pop-out box with enhanced pixelation to make the differences between plots easier to eye-ball.  
 
 
 ### 5. Unstructured_Interpolation.ipynb
