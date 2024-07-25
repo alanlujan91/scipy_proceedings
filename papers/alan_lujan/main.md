@@ -3,14 +3,14 @@
 title: multinterp
 subtitle: A Unified Interface for Multivariate Interpolation in the Scientific Python Ecosystem
 abstract: |
-  Multivariate interpolation is a fundamental tool in scientific computing, yet the Python ecosystem offers a fragmented landscape of specialized tools. This fragmentation hinders code reusability, experimentation, and efficient deployment across diverse hardware. To address this challenge, I've `[[I have]]` developed the `multinterp` package. It provides a unified interface for regular/rectilinear interpolation, 
-  `[[regular and irregular (data) structures, rectilinear and curvilinear grids, and regular-mesh, quadrilateral-mesh, and random-mesh geometries, ?]]`  
-  supports serial (NumPy/SciPy), parallel (Numba), and GPU (CuPy, PyTorch, JAX) backends, and includes tools for multivalued interpolation and `[["differentiation." instead]]` interpolation of derivatives.
+  Multivariate interpolation is a fundamental tool in scientific computing, yet the Python ecosystem offers a fragmented landscape of specialized tools. This fragmentation hinders code reusability, experimentation, and efficient deployment across diverse hardware. The `multinterp` package was developed to address this challenge. It provides a unified interface for regular/rectilinear interpolation, supports serial (NumPy/SciPy), parallel (Numba), and GPU (CuPy, PyTorch, JAX) backends, and includes tools for multivalued interpolation and  interpolation of derivatives.
 exports:
   - format: pdf
 ---
 
 `[[JY reviewer notes: my comments will be inside double brackets. Please feel free to incorporate or ignore at your discretion. All of my comments are intended to improve readability for a general reader.]]`
+
+`[[Question on abstract: did you mean "regular/irregular interpolation" in your abstract?]]`
 
 ## Introduction
 
@@ -20,21 +20,11 @@ Currently, there is no unified and comprehensive interface for interpolation wit
 
 This project aims to develop a comprehensive framework for multivariate interpolation for structured and unstructured data that can be used with different software technologies and hardware backends.
 
-`[[A highlighted box of definitions of mathematical terms may be useful to jog the memory of a general reader. Here seems like a good spot. Below are suggested definitions from Wikipedia. Please feel free to substitute with your own.]]`
+## Grid Interpolation
 
-`[[**Definition of Mathematical Terms**]]`   
-`[[multivariate interpolation: In mathematics or numerical analysis, "multivariate interpolation" is interpolation on functions of more than one variable.]]`  
-`[[multivariate calculus (or multivariable calculus): is the extension of calculus in one variable to calculus with functions of several variables.]]`  
-`[[non-analytic functions: (JY) are loosely defined as functions that do not have a known, closed-form solution.  (Wikipedia) Formally, non-analytic smooth functions are functions that are not differentiable along the full range of values of the function. Therefore, non-analytic smooth functions are solved by using approximation techniques.]]` 
-
-## Grid Interpolationis 
-
-Functions are powerful mappings between sets of inputs and outputs, indicating how one set of values is related to another. Functions, however, are also infinitely dimensional, in that the inputs can range over an infinite number of values each mapping 1-to-1 (typically) to an infinite number of outputs.
-`[[a but awkward, how about, "Functions, however, are also  infinitely dimensional. Inputs of infinite dimensions may be mapped onto outputs of infinite dimensions."]]` 
-This makes it difficult to represent non-analytic functions in a computational environment, as we can only store a finite number of values in memory. For this reason, interpolation is a powerful tool in scientific computing, as it allows us to represent functions with a finite number of values `[[maybe  points, locations]]` and to approximate the function's behavior between these values `[[points, locations]]`.
+Functions are powerful mappings between sets of inputs and outputs, indicating how one set of values is related to another. Functions, however, are also infinitely dimensional, in that the inputs can range over an infinite number of values each mapping 1-to-1 (typically) to an infinite number of outputs. This makes it difficult to represent non-analytic functions `[[ (i.e., without closed-form solutions) ]]` in a computational environment, as we can only store a finite number of values in memory. For this reason, interpolation is a powerful tool in scientific computing, as it allows us to represent functions with a finite number of values and to approximate the function's behavior between these values.
 
 The set of input values on which we know the function's output values is called a **grid**. A grid (or input grid) of values can be represented in many ways, depending on its underlying structure. The broadest categories of grids are regular or structured grids, and irregular or unstructured grids. 
-`[[how about, "The broadest grid category is based on its (data) structure, and is between regular and irregular grids.]]`
 Regular grids are those where the input values are arranged in a regular pattern, such as a triangle or a quadrangle. Irregular grids are those where the input values are not arranged in a particularly structured way and can seem to be scattered randomly across the input space.
 
 As we might imagine, interpolation on regular grids is much easier than interpolation on irregular grids as we are able to exploit the structure of the grid to make predictions about the function's behavior between known values. Irregular grid interpolation is much more difficult, and often requires *regularizing* and/or *regression* techniques to make predictions about the function's behavior between known values. `multinterp` aims to provide a comprehensive set of tools for both regular and irregular grid interpolation, and we will discuss some of these tools in the following sections.
@@ -58,8 +48,7 @@ As we might imagine, interpolation on regular grids is much easier than interpol
 
 ## Rectilinear Interpolation
 
-A *rectilinear* grid is a regular grid where the input values are arranged in a *rectangular* (in 2D) or *hyper-rectangular* (in higher dimensions) pattern. Moreover, they can be represented by the tensor product of monotonically increasing vectors along each dimension. For example, a 2D rectilinear grid can be represented by two 1D arrays of increasing values, such as $x = [x_0, x_1, x_2, \cdots, x_n]$ and $y = [y_0, y_1, y_2, \cdots, y_m]$, where $x_i > x_j$ and $y_i > y_j$ $\forall i > j$ `[[suggest using words "for all i > j" Non-math readers find it more friendly than symbol upside-down A.]]`, and the input grid is then represented by $x \times y$ of dimensions $n \times m$. 
-`[[awkward, but not sure how to fix. vector values are "increasing" from left-to-right index position, but math notations x_i > x_j and y_i > y_j describe a decreasing order when read from left-to-right. Also i and j are alphabetically increasing from left-to-right, but i index position is higher than (to the right of) j index position. i and j are in reverse alphabetical position.]]`
+A *rectilinear* grid is a regular grid where the input values are arranged in a *rectangular* (in 2D) or *hyper-rectangular* (in higher dimensions) pattern. Moreover, they can be represented by the tensor product of monotonically increasing vectors along each dimension. For example, a 2D rectilinear grid can be represented by two 1D arrays of increasing values, such as $x = [x_0, x_1, x_2, \cdots, x_n]$ and $y = [y_0, y_1, y_2, \cdots, y_m]$, where $x_i > x_j$ and $y_i > y_j$ $\forall i > j$ `[[Given your later example, it might be better to make j > i. Also suggest using words "for all i > j" for non-math readers instead of symbol.]]`, and the input grid is then represented by $x \times y$ of dimensions $n \times m$. 
 This allows for a very simple and efficient interpolation algorithm, as we can easily find and use the nearest known values to make predictions about the function's behavior in the unknown space.
 
 ```{figure} figures/BilinearInterpolation
@@ -73,7 +62,7 @@ A non-uniformly spaced rectilinear grid can be transformed into a uniformly spac
 
 ### Multilinear Interpolation
 
-`multinterp` provides a simple and efficient implementation of *multilinear interpolation* for various backends (`numpy` (@Harris2020), `scipy` (@Virtanen2020), `numba` (@Lam2015), `cupy` (@Okuta2017), `pytorch` (@Paszke2019), and `jax` (@Bradbury2018)) via its `multinterp` function. From the remaining of this section, `multinterp` refers to the `multinterp` function in `multinterp` package, unless otherwise specified.
+`multinterp` provides a simple and efficient implementation of *multilinear interpolation* for various backends (`numpy` (@Harris2020), `scipy` (@Virtanen2020), `numba` (@Lam2015), `cupy` (@Okuta2017), `pytorch` (@Paszke2019), and `jax` (@Bradbury2018)) via its `multinterp` function. `[[ For the remainder of this section... ]]` From the remaining of this section, `multinterp` refers to the `multinterp` function in `multinterp` package, unless otherwise specified.
 
 The main workhorse of `multinterp` is `scipy.ndimage`'s `map_coordinates` function. This function takes an array of **input** values and an array of **coordinates**, and returns the interpolated values at those coordinates. More specifically, the `input` array is the array of known values on the coordinate (index) grid, such that `input[i,j,k]` is the known value at the coordinate `(i,j,k)`. The `coordinates` array is an array of fractional coordinates at which we wish to know the values of the function, such as `coordinates[0] = (1.5, 2.3, 3.1)`. This indicates that we wish to know the value of the function between input index $i \in [1,2]$, $j \in [2,3]$, and $k \in [3,4]$. While `map_coordinates` is a powerful tool for coordinate grid interpolation, a typical function in question may not be defined on a coordinate grid. For this reason, we first need to find a mapping between the functional input grid and the coordinate grid, and then use `map_coordinates` to interpolate the function on the coordinate grid.
 
@@ -130,7 +119,7 @@ Unstructured grids are irregular and often require a triangulation step which mi
 ## Conclusion
 
 Multivariate interpolation is a cornerstone of scientific computing, yet the Python ecosystem (@Oliphant2007) presents a fragmented landscape of tools. While individually powerful, these packages often lack a unified interface. This fragmentation makes it difficult for researchers to experiment with different interpolation methods, optimize performance across diverse hardware, and handle varying data structures (regular, rectilinear, curvilinear, unstructured).
-`[[Is there a way to give a nod to PyTorch and TensorFlow for having call-backs, hooks, and function wrappers to allow a user to swap out an optimization function or module mid-stream? They do not cover all the use cases of the `multinterp` package, but some effort went into developing a layered API to cover varying use cases.  NumPy also has structured datatype, that can be used for irregular and hierarchial data structures.  It can be seen as an attempt to provide a flexible (customizable) user interface, even though its aim and scope is different from 'multinterp.' (NumPy structured datatype's goal seems mostly for C code interface and optimized C module or C numerical recipe interface or explicit memory control or memory layout control.) The general reader may appreciate having some context. This package may be viewed as a further development of previous efforts at a flexible user interface for users of varying data types and data geometries.]]`  `[[`(See <b>Structured arrays</b> in https://numpy.org/doc/stable/user/basics.rec.html) ` ]]`
+`[[Is there a way to give a nod to PyTorch and TensorFlow for having call-backs, hooks, and function wrappers to allow a user to swap out an optimization function or module mid-stream? They do not cover all the use cases of the `multinterp` package, but some effort went into developing a layered API to cover varying use cases.  NumPy also has structured datatype, that can be used for irregular and hierarchial data structures.  It can be seen as an attempt to provide a flexible (customizable) user interface, even though its aim and scope is different from 'multinterp.' (NumPy structured datatype's goal seems mostly for C code interface and optimized C module or C numerical recipe interface or explicit memory control or memory layout control.) The general reader may appreciate having some context. This package may be viewed as a further development of previous efforts at a flexible user interface for users of varying data types and data geometries. (See structured arrays in https://numpy.org/doc/stable/user/basics.rec.html) ]]`
 
 The `multinterp` project seeks to change this. Its goal is to provide a unified, comprehensive, and flexible framework for multivariate interpolation in Python. This framework will streamline workflows by offering:
 
