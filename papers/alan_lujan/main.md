@@ -10,7 +10,7 @@ exports:
 
 `[[JY reviewer notes: my comments will be inside double brackets. Please feel free to incorporate or ignore at your discretion. All of my comments are intended to improve readability for a general reader.]]`
 
-`[[Question on abstract: did you mean "regular/irregular interpolation" in your abstract?]]`
+`[[Question on abstract: did you mean "regular/irregular interpolation" in your abstract? Removed "I've" in abstract.]]`
 
 ## Introduction
 
