@@ -119,7 +119,7 @@ Unstructured grids are irregular and often require a triangulation step which mi
 ## Conclusion
 
 Multivariate interpolation is a cornerstone of scientific computing, yet the Python ecosystem (@Oliphant2007) presents a fragmented landscape of tools. While individually powerful, these packages often lack a unified interface. This fragmentation makes it difficult for researchers to experiment with different interpolation methods, optimize performance across diverse hardware, and handle varying data structures (regular, rectilinear, curvilinear, unstructured).
-`[[Is there a way to give a nod to PyTorch and TensorFlow for having call-backs, hooks, and function wrappers to allow a user to swap out an optimization function or module mid-stream? They do not cover all the use cases of the `multinterp` package, but some effort went into developing a layered API to cover varying use cases.  NumPy also has structured datatype, that can be used for irregular and hierarchial data structures.  It can be seen as an attempt to provide a flexible (customizable) user interface, even though its aim and scope is different from 'multinterp.' (NumPy structured datatype's goal seems mostly for C code interface and optimized C module or C numerical recipe interface or explicit memory control or memory layout control.) The general reader may appreciate having some context. This package may be viewed as a further development of previous efforts at a flexible user interface for users of varying data types and data geometries. (See structured arrays in https://numpy.org/doc/stable/user/basics.rec.html) ]]`
+`[[Is there a way to give a nod to PyTorch and TensorFlow for having call-backs, hooks, and function wrappers to allow a user to swap out an optimization function or module mid-stream? They do not cover all the use cases of the `multinterp` package, but some effort went into developing a layered API to cover varying use cases.  NumPy also has structured data type, that can be used for custom data type and hierarchial data structures.  It can be seen as an attempt to provide a flexible (customizable) user interface, even though its aim and scope is different from 'multinterp.' (NumPy structured datatype's goal seems mostly for C code interface and optimized C module or C numerical recipe interface or explicit memory control or memory layout control.) The general reader may appreciate having some context. This package may be viewed as a further development of previous efforts at a flexible user interface for users of varying data types and data geometries. (See structured arrays in https://numpy.org/doc/stable/user/basics.rec.html) ]]`
 
 The `multinterp` project seeks to change this. Its goal is to provide a unified, comprehensive, and flexible framework for multivariate interpolation in Python. This framework will streamline workflows by offering:
 
@@ -130,8 +130,8 @@ The `multinterp` project seeks to change this. Its goal is to provide a unified,
 The multinterp package (<https://github.com/alanlujan91/multinterp>) is currently in its beta stage.  It offers a strong foundation but welcomes community contributions to reach its full potential.  We invite collaboration to improve documentation, expand the test suite, and ensure the codebase aligns with the highest standards of Python package development.
 
 `[[On Curvenoted build preview: right-column bottom shows list of files used in the article. These should be listed in the order of their appearance in the paper. See suggestion below.]]`
-```
-[[Supporting Documents  
+
+`[[Supporting Documents  
 (shown in the order of appearance)  
  1. Multivariate_Interpolation.ipynb  
  2. Multivariate_Interpolation_with_Derivatives.ipynb   
@@ -139,6 +139,6 @@ The multinterp package (<https://github.com/alanlujan91/multinterp>) is currentl
  4. Curvilinear_Interpoliation.ipynb 
  5. Unstructured_Interpolation.ipynb
  6. manim_notebook.ipynb (figure animation on Curvenotes build)
- [[7. figures.ipynb add? (build figure grid scaffolds) ]]
-]]
-```
+ 7. figures.ipynb (add?) (build figure grid scaffolds) 
+]]`
+
