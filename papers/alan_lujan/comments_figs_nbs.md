@@ -77,4 +77,4 @@ screenshot1.PNG  <img src="\figures\screenshot1.PNG" width="700" >
 
 screenshot2.PNG <img src="\figures\screenshot2.PNG" width="700" >
 
-Should "Gaussian Process" be "Gaussian Process Regression" for title, last figure.  
+Should "Gaussian Process" be "Gaussian Process Regression" for title, last figure?  
