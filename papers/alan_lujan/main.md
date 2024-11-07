@@ -488,23 +488,14 @@ The benchmarks were conducted using the following setup:
 
 The first set of benchmarks compares the performance of `multinterp` with `scipy.interpolate.RegularGridInterpolator`, a widely-used interpolation library in the scientific Python ecosystem. The benchmarks were conducted for both 2D and 3D grids, and the results are presented in the following figures.
 
-```{embed} #fig:performance_comparison_2d
+```{embed} #fig:multivariate_speed_2d
 :remove-input: true
-```
 
-```{embed} #fig:performance_comparison_3d
-:remove-input: true
 ```
-
-### Backend Comparison
 
 The second set of benchmarks compares the performance of different backends in `multinterp`. The benchmarks were conducted for both 2D and 3D grids, and the results are presented in the following figures.
 
-```{embed} #fig:backend_comparison_2d
-:remove-input: true
-```
-
-```{embed} #fig:backend_comparison_3d
+```{embed} #fig:multivariate_speed_3d
 :remove-input: true
 ```
 

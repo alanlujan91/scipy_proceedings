@@ -1,6 +1,7 @@
 ---
 jupyter:
   jupytext:
+    formats: ipynb,md
     text_representation:
       extension: .md
       format_name: markdown
@@ -80,6 +81,8 @@ Now we can compare the results of the interpolation with the original function. 
 
 
 ```python
+# | label: fig:unstructured_original
+
 true_grid = function_1(grid_x, grid_y)
 plt.imshow(true_grid.T, extent=(0, 3, 0, 3), origin="lower")
 plt.plot(rand_x, rand_y, "ok", ms=2, label="input points")
@@ -91,6 +94,8 @@ Then, we can look at the result for each method of interpolation and compare it 
 
 
 ```python
+# | label: fig:unstructured_interpolated
+
 fig, axs = plt.subplots(2, 2, figsize=(6, 6))
 titles = ["Nearest", "Linear", "Cubic", "Radial basis function"]
 grids = [nearest_grid, linear_grid, cubic_grid, rbf_grid]
@@ -104,9 +109,12 @@ plt.show()
 ```
 
 
-Finally, `multinterp` also provides a set of interpolators organized around the concept of *regression*. As a demonstration, below we use a `RegressionUnstructuredInterp` interpolator which uses a Gaussian Process regression model from `scikit-learn` (@Pedregosa2011) to interpolate the function defined on the unstructured grid. The `RegressionUnstructuredInterp` class takes the same arguments as the `UnstructuredInterp` class, but it additionally requires the user to specify the regression `model` to use. 
+Finally, `multinterp` also provides a set of interpolators organized around the concept of _regression_. As a demonstration, below we use a `RegressionUnstructuredInterp` interpolator which uses a Gaussian Process regression model from `scikit-learn` (@Pedregosa2011) to interpolate the function defined on the unstructured grid. The `RegressionUnstructuredInterp` class takes the same arguments as the `UnstructuredInterp` class, but it additionally requires the user to specify the regression `model` to use.
+
 
 ```python
+# | label: fig:unstructured_gp
+
 from multinterp import RegressionUnstructuredInterp
 
 gaussian_interp = RegressionUnstructuredInterp(

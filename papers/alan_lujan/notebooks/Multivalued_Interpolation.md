@@ -1,6 +1,7 @@
 ---
 jupyter:
   jupytext:
+    formats: ipynb,md
     text_representation:
       extension: .md
       format_name: markdown
@@ -22,6 +23,7 @@ from multinterp.rectilinear._multi import MultivaluedInterp
 
 Consider the following multivalued function:
 
+
 ```python
 def squared_coords(x, y):
     return x**2 + y**2
@@ -35,7 +37,8 @@ def multivalued_func(x, y):
     return np.array([squared_coords(x, y), trig_func(x, y)])
 ```
 
-As before, we can generate values on a sample input grid, and create a grid of query points. 
+As before, we can generate values on a sample input grid, and create a grid of query points.
+
 
 ```python
 x_grid = np.geomspace(1, 11, 1000) - 1
@@ -53,7 +56,10 @@ x_new, y_new = np.meshgrid(
 
 `MultivaluedInterp` can easily interpolate the function at the query points and avoid repeated calculations.
 
+
 ```python
+# | label: fig:multivalued
+
 mult_interp = MultivaluedInterp(z_mat, [x_grid, y_grid], backend="cupy")
 z_mult_interp = mult_interp(x_new, y_new).get()
 z_true = multivalued_func(x_new, y_new)

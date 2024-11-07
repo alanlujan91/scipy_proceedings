@@ -1,6 +1,7 @@
 ---
 jupyter:
   jupytext:
+    formats: ipynb,md
     text_representation:
       extension: .md
       format_name: markdown
@@ -32,7 +33,7 @@ def function_1(x, y):
     return x * (1 - x) * np.cos(4 * np.pi * x) * np.sin(4 * np.pi * y**2) ** 2
 ```
 
-The points are randomly scattered in the unit square and therefore have no regular structure. This is achieved by randomly shifting a well structured grid at every point. 
+The points are randomly scattered in the unit square and therefore have no regular structure. This is achieved by randomly shifting a well structured grid at every point.
 
 
 ```python
@@ -93,6 +94,8 @@ Now we can compare the results of the interpolation with the original function. 
 
 
 ```python
+# | label: fig:curvilinear_original
+
 plt.imshow(function_1(grid_x, grid_y).T, extent=(0, 1, 0, 1), origin="lower")
 plt.plot(rand_x.flat, rand_y.flat, "ok", ms=2, label="input points")
 plt.title("Original")
@@ -104,6 +107,8 @@ Then, we can look at the result for each method of interpolation and compare it 
 
 
 ```python
+# | label: fig:curvilinear_result
+
 fig, axs = plt.subplots(1, 3, figsize=(9, 6))
 titles = ["Original", "WarpedInterp", "CurvilinearInterp"]
 grids = [function_1(grid_x, grid_y), warped_grid, curvilinear_grid]
@@ -117,7 +122,8 @@ plt.show()
 ```
 
 
-In short, `multinterp`'s `Warped2DInterp` and `Curvilinear2DInterp` classes are useful for interpolating functions on curvilinear grids which have a quadrilateral structure but are not perfectly rectangular. 
+In short, `multinterp`'s `Warped2DInterp` and `Curvilinear2DInterp` classes are useful for interpolating functions on curvilinear grids which have a quadrilateral structure but are not perfectly rectangular.
+
 
 
 

@@ -1,6 +1,7 @@
 ---
 jupyter:
   jupytext:
+    formats: ipynb,md
     text_representation:
       extension: .md
       format_name: markdown
@@ -34,8 +35,8 @@ Suppose we are trying to approximate the following function at a set of points:
 
 
 ```python
-def squared_coords(x, y):
-    return x**2 + y**2
+def squared_coords(*x):
+    return sum(xi**2 for xi in x)
 ```
 
 Our points will lie on a regular or rectilinear grid. A rectilinear grid may not be evenly spaced, but it can be reproduced by the cross product of $n$ 1-dimensional vectors. For example, let's assume we know the value of the function at the following points:
@@ -64,6 +65,8 @@ We can use scipy's `RegularGridInterpolator` to interpolate the function at thes
 
 
 ```python
+# | label: fig:multivariate_regular
+
 interp = RegularGridInterpolator([x_grid, y_grid], z_mat)
 z_interp = interp(np.column_stack((x_new.ravel(), y_new.ravel()))).reshape(x_new.shape)
 
@@ -81,6 +84,8 @@ Here we introduce `MultivariateInterp`, which brings additional features and spe
 
 
 ```python
+# | label: fig:multivariate_interp
+
 mult_interp = MultivariateInterp(z_mat, [x_grid, y_grid])
 z_mult_interp = mult_interp(x_new, y_new)
 
@@ -108,7 +113,7 @@ z_gpu_interp = gpu_interp(x_new, y_new).get()  # Get the result from GPU
 z_gpu_interp = gpu_interp(x_new, y_new).get()  # Get the result from GPU
 ```
 
-We can test the results of `MultivariateInterp` against  `RegularGridInterpolator`, and we see that the results are almost identical.
+We can test the results of `MultivariateInterp` against `RegularGridInterpolator`, and we see that the results are almost identical.
 
 
 ```python
@@ -120,7 +125,7 @@ To experiment with `MultivariateInterp` and evaluate the conditions which make i
 
 ```python
 n = 35
-grid_max = 300
+grid_max = 500
 grid = np.linspace(10, grid_max, n, dtype=int)
 fast = np.empty((n, n))
 scipy = np.empty_like(fast)
@@ -134,18 +139,18 @@ We will use the following function to time the execution of the interpolation.
 
 
 ```python
-def timeit(interp, x, y, min_time=1e-6):
+def timeit(interp, *coords):
     if isinstance(interp, RegularGridInterpolator):
         start = time()
-        points = np.column_stack((x.ravel(), y.ravel()))
-        interp(points).reshape(x.shape)
+        points = np.column_stack([coord.ravel() for coord in coords])
+        interp(points).reshape(coords[0].shape)
     else:
         interp.compile()
         start = time()
-        interp(x, y)
+        interp(*coords)
 
     elapsed_time = time() - start
-    return max(elapsed_time, min_time)
+    return max(elapsed_time, 1e-6)
 ```
 
 For different number of data points and approximation points, we can time the interpolation on different backends and use the results of `RegularGridInterpolator` to normalize the results. This will give us a direct comparison of the speed of `MultivariateInterp` and `RegularGridInterpolator`.
@@ -175,7 +180,118 @@ for i, j in product(range(n), repeat=2):
 ```
 
 ```python
+# | label: fig:multivariate_speed_2d
+
 fig, ax = plt.subplots(1, 3, sharey=True)
+
+
+ax[0].imshow(
+    scipy,
+    cmap="RdBu",
+    origin="lower",
+    norm=colors.SymLogNorm(1, vmin=0, vmax=10),
+    interpolation="bicubic",
+    extent=[0, grid_max, 0, grid_max],
+)
+ax[0].set_title("scipy")
+
+
+ax[1].imshow(
+    parallel,
+    cmap="RdBu",
+    origin="lower",
+    norm=colors.SymLogNorm(1, vmin=0, vmax=10),
+    interpolation="bicubic",
+    extent=[0, grid_max, 0, grid_max],
+)
+ax[1].set_title("numba")
+
+cbar = ax[2].imshow(
+    gpu,
+    cmap="RdBu",
+    origin="lower",
+    norm=colors.SymLogNorm(1, vmin=0, vmax=10),
+    interpolation="bicubic",
+    extent=[0, grid_max, 0, grid_max],
+)
+ax[2].set_title("cupy")
+
+
+cbar = fig.colorbar(
+    cbar,
+    ax=ax,
+    label="Relative Speed (faster - slower)",
+    location="bottom",
+)
+cbar.set_ticks([0, 0.1, 0.5, 1, 2, 5, 10])
+cbar.set_ticklabels(["0", "0.1", "0.5", "1", "2", "5", "10"])
+ax[0].set_ylabel("Data grid size (squared)")
+ax[1].set_xlabel("Approximation grid size (squared)")
+
+fig.suptitle("Benchmarks for 2D Interpolation", y=0.75)
+```
+
+```python
+n = 20
+grid_max = 200
+grid = np.linspace(10, grid_max, n, dtype=int)
+fast = np.empty((n, n))
+scipy = np.empty_like(fast)
+parallel = np.empty_like(fast)
+gpu = np.empty_like(fast)
+```
+
+```python
+for i, j in product(range(n), repeat=2):
+    data_grid = np.linspace(0, 10, grid[i])
+    x_cross, y_cross, w_cross = np.meshgrid(
+        data_grid,
+        data_grid,
+        data_grid,
+        indexing="ij",
+    )
+    z_cross = squared_coords(x_cross, y_cross, w_cross)
+
+    approx_grid = np.linspace(0, 10, grid[j])
+    x_approx, y_approx, w_approx = np.meshgrid(
+        approx_grid,
+        approx_grid,
+        approx_grid,
+        indexing="ij",
+    )
+
+    fast_interp = RegularGridInterpolator([data_grid, data_grid, data_grid], z_cross)
+    time_norm = timeit(fast_interp, x_approx, y_approx, w_approx)
+    fast[i, j] = time_norm
+
+    scipy_interp = MultivariateInterp(
+        z_cross,
+        [data_grid, data_grid, data_grid],
+        backend="scipy",
+    )
+    scipy[i, j] = timeit(scipy_interp, x_approx, y_approx, w_approx) / time_norm
+
+    par_interp = MultivariateInterp(
+        z_cross,
+        [data_grid, data_grid, data_grid],
+        backend="numba",
+    )
+    parallel[i, j] = timeit(par_interp, x_approx, y_approx, w_approx) / time_norm
+
+    gpu_interp = MultivariateInterp(
+        z_cross,
+        [data_grid, data_grid, data_grid],
+        backend="cupy",
+    )
+    gpu[i, j] = timeit(gpu_interp, x_approx, y_approx, w_approx) / time_norm
+```
+
+```python
+# | label: fig:multivariate_speed_3d
+
+fig, ax = plt.subplots(1, 3, sharey=True)
+
+fig.suptitle("Benchmarks for 3D Interpolation", y=0.75)
 
 
 ax[0].imshow(
@@ -229,6 +345,7 @@ For `backend="scipy"`, `MultivariateInterp` is (much) slower when the number of 
 For `backend="numba"`, `MultivariateInterp` is slightly faster when the number of data points with known function value are greater than the number of approximation points that need to be interpolated. However, `backend='parallel'` still suffers from the high overhead when the number of approximation points is small.
 
 For `backend="cupy"`, `MultivariateInterp` is much slower when the number of data points with known function value are small. This is because of the overhead of copying the data to the GPU. However, `backend='numba'` is significantly faster for any other case when the number of approximation points is large regardless of the number of data points.
+
 
 
 
